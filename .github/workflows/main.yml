@@ -31,11 +31,13 @@ jobs:
             - name: Get binstall
               uses: actions-rs/cargo@v1
               with:
-                  command: install binstall
+                  command: install
+                  args: binstall
             - name: Get Dioxus-cli
               uses: actions-rs/cargo@v1
               with:
-                  command: binstall dioxus-cli@0.7.0-rc.0
+                  command: binstall
+                  args: dioxus-cli@0.7.0-rc.0
 
             - name: Build the application
               run: | 
