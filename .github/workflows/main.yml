@@ -28,16 +28,16 @@ jobs:
               with:
                   command: test
 
-            - name: Get binstall
+            - name: Get cargo-binstall
               uses: actions-rs/cargo@v1
               with:
                   command: install
                   args: cargo-binstall
-            - name: Get Dioxus-cli
+            - name: Get Dioxus-CLI
               uses: actions-rs/cargo@v1
               with:
                   command: binstall
-                  args: dioxus-cli@0.7.0-rc.0
+                  args: dioxus-cli@0.7.0-rc.0 --disable-telemetry
 
             - name: Build the application
               run: | 
