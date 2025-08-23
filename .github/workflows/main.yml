@@ -38,5 +38,5 @@ jobs:
 
             - name: Build the application
               run: | 
-                dx build --package web --platform web
+                dx build --platform web
               
