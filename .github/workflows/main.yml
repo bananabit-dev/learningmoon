@@ -34,10 +34,7 @@ jobs:
                   command: install
                   args: cargo-binstall
             - name: Get Dioxus-CLI
-              uses: actions-rs/cargo@v1
-              with:
-                  command: binstall
-                  args: dioxus-cli@0.7.0-rc.0 --disable-telemetry
+              run: yes | cargo binstall dioxus-cli@0.7.0-rc.0 --disable-telemetry
 
             - name: Build the application
               run: | 
