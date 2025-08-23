@@ -32,7 +32,7 @@ jobs:
               uses: actions-rs/cargo@v1
               with:
                   command: install
-                  args: binstall
+                  args: cargo-binstall
             - name: Get Dioxus-cli
               uses: actions-rs/cargo@v1
               with:
