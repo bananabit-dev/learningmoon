@@ -1,0 +1,43 @@
+name: Build and Deploy learning moon app
+
+on:
+    push:
+        branches:
+            - main
+jobs:
+    build-deploy:
+        name: Build and Deploy learning moon app
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v5
+
+            - name: Setup Rust toolchain
+              uses: actions-rs/toolchain@v1
+              with:
+                  toolchain: nightly
+                  override: true
+                  components: rustfmt, clippy
+            
+            - name: Run cargo check
+              uses: actions-rs/cargo@v1
+              with:
+                  command: check            
+            - name: Run tests
+              uses: actions-rs/cargo@v1
+              with:
+                  command: test
+
+            - name: Get binstall
+              uses: actions-rs/cargo@v1
+              with:
+                  command: install binstall
+            - name: Get Dioxus-cli
+              uses: actions-rs/cargo@v1
+              with:
+                  command: binstall dioxus-cli@0.7.0-rc.0
+
+            - name: Build the application
+              run: | 
+                dx build --package web --platform web
+              
