@@ -20,3 +20,6 @@ web = ["dioxus/web"]
 api = ["dioxus/server", "tokio", "axum", "tower-http"]
 desktop = ["dioxus/desktop"]
 mobile = ["dioxus/mobile"]
+
+[profile.release]
+lto = false
