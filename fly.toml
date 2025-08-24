@@ -1,0 +1,6 @@
+app = "learningmoon"
+primary_region = "fra"
+
+
+[build]
+  dockerfile = "Dockerfile"
