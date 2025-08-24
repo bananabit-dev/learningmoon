@@ -27,7 +27,7 @@ ENV PATH="/.cargo/bin:$PATH"
 RUN npm install -D tailwindcss @tailwindcss/cli
 
 # Build Tailwind CSS (adjust input/output paths to your project)
-RUN npx tailwindcss -i ./input.css -o ./assets/tailwind.css --minify
+RUN npx tailwindcss -i ./tailwind.css -o ./assets/tailwind.css --minify
 
 # Create the final bundle folder. Bundle always executes in release mode with optimizations enabled
 RUN dx bundle --platform web
