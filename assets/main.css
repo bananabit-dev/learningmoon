@@ -39,7 +39,7 @@ body {
 }
 
 #header {
-    align-self: center;
+    justify-content: center;
     max-width: 1200px;
 }
 
