@@ -39,8 +39,10 @@ body {
 }
 
 #header {
-    justify-content: center;
-    max-width: 1200px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
 }
 
 /* Navbar */
