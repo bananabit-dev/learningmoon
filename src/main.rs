@@ -15,9 +15,9 @@ enum Route {
     Register {},
 }
 
-const FAVICON: Asset = asset!("/assets/favicon.ico", AssetOptions::builder().with_hash_suffix(false).into_asset_options());
-const MAIN_CSS: Asset = asset!("/assets/main.css", AssetOptions::builder().with_hash_suffix(false).into_asset_options());
-const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css", AssetOptions::builder().with_hash_suffix(false).into_asset_options());
+const FAVICON: Asset = asset!("/assets/favicon.ico");
+const MAIN_CSS: Asset = asset!("/assets/main.css");
+const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
 
 fn main() {
     #[cfg(feature = "web")]
@@ -40,7 +40,7 @@ fn main() {
             // --- Build Axum Router ---
             let app = Router::new()
                 // Serve static assets from public/assets (matches your bundle structure)
-                .nest_service("/assets", get_service(ServeDir::new("public/assets")))
+                .nest_service("/assets", get_service(ServeDir::new("assets")))
                 // IMPORTANT: Dioxus needs to handle all routes for SPA
                 .serve_dioxus_application(
                     ServeConfig::builder()
