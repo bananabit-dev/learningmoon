@@ -30,7 +30,6 @@ fn main() {
     {
         use axum::Router;
         use dioxus::fullstack::ServeConfig;
-        use std::net::SocketAddr;
         use tower_http::services::ServeDir;
         // Server-side Axum launch
         tokio::runtime::Runtime::new().unwrap().block_on(async {
@@ -42,7 +41,7 @@ fn main() {
                 // Serve the Dioxus SPA (index.html + hydration)
                 .serve_dioxus_application(ServeConfig::builder().build().unwrap(), App);
 
-            let addr: SocketAddr = "0.0.0.0:8080".parse().unwrap();
+            let addr = dioxus::cli_config::fullstack_address_or_localhost();
             println!("🚀 Server running at http://{}", addr);
 
             axum::serve(tokio::net::TcpListener::bind(addr).await.unwrap(), app)
