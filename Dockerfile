@@ -30,7 +30,7 @@ RUN npm install -D tailwindcss @tailwindcss/cli
 RUN npx tailwindcss -i ./tailwind.css -o ./assets/tailwind.css --minify
 
 # Create the final bundle folder. Bundle always executes in release mode with optimizations enabled
-RUN dx bundle --release
+RUN dx bundle --platform web --release
 
 FROM chef AS runtime
 COPY --from=builder /app/target/dx/learningmoon/release/web/ /usr/local/app
