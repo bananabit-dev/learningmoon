@@ -36,8 +36,8 @@ fn main() {
             // Build Axum router
             let app = Router::new()
                 // Serve static assets (WASM, JS, CSS, favicon, etc.)
-                .nest_service("/assets", ServeDir::new("dist/assets"))
-                .nest_service("/", ServeDir::new("dist"))
+                .nest_service("/assets", ServeDir::new("public/assets"))
+                .nest_service("/", ServeDir::new("public"))
                 // Serve the Dioxus SPA (index.html + hydration)
                 .serve_dioxus_application(ServeConfig::builder().build().unwrap(), App);
 
