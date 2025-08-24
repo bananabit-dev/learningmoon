@@ -29,26 +29,40 @@ fn main() {
 
     #[cfg(feature = "api")]
     {
-        use axum::Router;
-        use dioxus::fullstack::ServeConfig;
+        use axum::{
+            routing::get_service,
+            Router,
+        };
         use tower_http::services::ServeDir;
-        // Server-side Axum launch
-        use axum::routing::get_service;
+        use dioxus::logger::tracing::*;
 
-        let app = Router::new()
-            // Serve /assets normally
-            .nest_service("/assets", get_service(ServeDir::new("dist/assets")))
-            // Fallback for everything else → serve from dist/
-            .fallback_service(get_service(ServeDir::new("dist")).handle_error(
-                |err: std::io::Error| async move {
-                    (
-                        axum::http::StatusCode::INTERNAL_SERVER_ERROR,
-                        format!("Unhandled internal error: {}", err),
-                    )
-                },
-            ))
-            // Dioxus SPA hydration
-            .serve_dioxus_application(ServeConfig::builder().build().unwrap(), App);
+        tokio::runtime::Runtime::new().unwrap().block_on(async {
+
+
+            // Bind address (force 0.0.0.0 for Docker)
+            let addr = dioxus::cli_config::fullstack_address_or_localhost();
+            info!("🚀 Starting web server on http://{}", addr);
+
+            // --- Build Axum Router ---
+            let app = Router::new()
+                // Serve static assets
+                .nest_service("/assets", get_service(ServeDir::new("dist/assets")))
+                .fallback_service(get_service(ServeDir::new("dist")))
+                // Dioxus SPA hydration
+                .serve_dioxus_application(
+                    ServeConfig::builder()
+                        .build()
+                        .expect("Failed to build serve config"),
+                    App,
+                );
+
+            // --- Start server ---
+            if let Err(e) =
+                axum::serve(tokio::net::TcpListener::bind(addr).await.unwrap(), app).await
+            {
+                error!("🔥 Server error: {}", e);
+            }
+        });
     }
 }
 
