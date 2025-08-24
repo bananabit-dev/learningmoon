@@ -1,4 +1,5 @@
 [application]
+assets_dir = "public"
 
 [web.app]
 

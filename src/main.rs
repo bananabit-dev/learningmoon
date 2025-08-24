@@ -29,26 +29,19 @@ fn main() {
 
     #[cfg(feature = "api")]
     {
-        use axum::{
-            routing::get_service,
-            Router,
-        };
-        use tower_http::services::ServeDir;
+        use axum::{routing::get_service, Router};
         use dioxus::logger::tracing::*;
+        use tower_http::services::ServeDir;
 
         tokio::runtime::Runtime::new().unwrap().block_on(async {
-
-
-            // Bind address (force 0.0.0.0 for Docker)
             let addr = dioxus::cli_config::fullstack_address_or_localhost();
             info!("🚀 Starting web server on http://{}", addr);
 
             // --- Build Axum Router ---
             let app = Router::new()
-                // Serve static assets
+                // Serve static assets from public/assets (matches your bundle structure)
                 .nest_service("/assets", get_service(ServeDir::new("public/assets")))
-                .fallback_service(get_service(ServeDir::new("assets")))
-                // Dioxus SPA hydration
+                // IMPORTANT: Dioxus needs to handle all routes for SPA
                 .serve_dioxus_application(
                     ServeConfig::builder()
                         .build()
