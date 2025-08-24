@@ -23,7 +23,8 @@ fn main() {
     #[cfg(feature = "web")]
     {
         // Client-side WASM launch
-        dioxus::launch(App);
+        server_fn::client::set_server_url("https://learningmoon.app");
+        LaunchBuilder::web().launch(App);
     }
 
     #[cfg(feature = "api")]
