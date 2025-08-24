@@ -17,7 +17,7 @@ RUN cargo binstall dioxus-cli --root /.cargo -y --force
 ENV PATH="/.cargo/bin:$PATH"
 
 # Create the final bundle folder. Bundle always executes in release mode with optimizations enabled
-RUN dx bundle --web
+RUN dx bundle --platform web
 
 FROM chef AS runtime
 COPY --from=builder /app/target/dx/learningmoon/release/web/ /usr/local/app
