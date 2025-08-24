@@ -37,7 +37,7 @@ fn App() -> Element {
 #[component]
 fn Home() -> Element {
     rsx! {
-        p { "Welcome to learningmoon" }
+        p { "Welcome to learningmoon !" }
     }
 }
 
