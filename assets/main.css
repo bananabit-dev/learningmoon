@@ -39,6 +39,7 @@ body {
 }
 
 #header {
+    align-self: center;
     max-width: 1200px;
 }
 
