@@ -30,7 +30,7 @@ RUN npm install -D tailwindcss @tailwindcss/cli
 RUN npx tailwindcss -i ./tailwind.css -o ./assets/tailwind.css --minify
 
 # Build ONCE with fullstack platform (includes both web and server with api feature)
-RUN dx build --platform web --release --features "web,api"
+RUN dx build --platform server --release --features api
 
 FROM chef AS runtime
 COPY --from=builder /app/target/dx/learningmoon/release/web/ /usr/local/app

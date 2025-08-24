@@ -15,9 +15,9 @@ enum Route {
     Register {},
 }
 
-const FAVICON: Asset = asset!("/assets/favicon.ico");
-const MAIN_CSS: Asset = asset!("/assets/main.css");
-const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
+const FAVICON: Asset = asset!("/assets/favicon.ico", AssetOptions::builder().with_hash_suffix(false).into_asset_options());
+const MAIN_CSS: Asset = asset!("/assets/main.css", AssetOptions::builder().with_hash_suffix(false).into_asset_options());
+const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css", AssetOptions::builder().with_hash_suffix(false).into_asset_options());
 
 fn main() {
     #[cfg(feature = "web")]
