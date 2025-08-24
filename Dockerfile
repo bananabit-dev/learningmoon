@@ -31,7 +31,9 @@ RUN mkdir -p ./public/assets && \
     npx tailwindcss -i ./tailwind.css -o ./public/assets/tailwind.css --minify
 
 # Bundle with server platform - this should process assets with the asset! macro
+RUN dx bundle --platform web --release --features web
 RUN dx bundle --platform server --release --features api
+
 
 # Debug: Check what dx bundle actually generated
 RUN echo "=== Contents of bundle output ===" && \
