@@ -20,7 +20,36 @@ const MAIN_CSS: Asset = asset!("/assets/main.css");
 const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
 
 fn main() {
-    dioxus::launch(App);
+    #[cfg(feature = "web")]
+    {
+        // Client-side WASM launch
+        dioxus::launch(App);
+    }
+
+    #[cfg(feature = "api")]
+    {
+        use axum::Router;
+        use dioxus::fullstack::ServeConfig;
+        use std::net::SocketAddr;
+        use tower_http::services::ServeDir;
+        // Server-side Axum launch
+        tokio::runtime::Runtime::new().unwrap().block_on(async {
+            // Build Axum router
+            let app = Router::new()
+                // Serve static assets (WASM, JS, CSS, favicon, etc.)
+                .nest_service("/assets", ServeDir::new("public/assets"))
+                .nest_service("/", ServeDir::new("public"))
+                // Serve the Dioxus SPA (index.html + hydration)
+                .serve_dioxus_application(ServeConfig::builder().build().unwrap(), App);
+
+            let addr: SocketAddr = "0.0.0.0:8080".parse().unwrap();
+            println!("🚀 Server running at http://{}", addr);
+
+            axum::serve(tokio::net::TcpListener::bind(addr).await.unwrap(), app)
+                .await
+                .unwrap();
+        });
+    }
 }
 
 #[component]
@@ -31,7 +60,6 @@ fn App() -> Element {
         Router::<Route> {}
     }
 }
-
 
 /// Home page
 #[component]
