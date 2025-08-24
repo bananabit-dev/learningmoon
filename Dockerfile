@@ -14,8 +14,11 @@ RUN apt-get update && apt-get install -y curl ca-certificates gnupg \
     && apt-get install -y nodejs \
     && npm install -g npm@latest
 
+RUN rustup target add wasm32-unknown-unknown
+
 COPY --from=planner /app/recipe.json recipe.json
-RUN cargo chef cook --release --recipe-path recipe.json
+RUN cargo chef cook --release --recipe-path recipe.json --features api
+
 COPY . .
 
 # Install `dx`
@@ -23,44 +26,59 @@ RUN curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/ca
 RUN cargo binstall dioxus-cli --root /.cargo -y --force
 ENV PATH="/.cargo/bin:$PATH"
 
-# Install Tailwind CLI locally
-RUN npm install -D tailwindcss @tailwindcss/cli
+# Install Tailwind
+RUN npm install -D tailwindcss
 
-# Build Tailwind CSS to public/assets (where dx bundle expects it)
-RUN mkdir -p ./public/assets && \
-    npx tailwindcss -i ./tailwind.css -o ./public/assets/tailwind.css --minify
+# CRITICAL: Create the correct directory structure for assets
+# Dioxus expects assets in specific locations
+RUN mkdir -p ./public/assets ./assets
 
-# Bundle with server platform - this should process assets with the asset! macro
-RUN dx bundle --platform web --release --features web
-RUN dx bundle --platform server --release --features api
+# Build Tailwind CSS to BOTH locations to ensure it's found
+RUN npx tailwindcss -i ./tailwind.css -o ./public/assets/tailwind.css --minify
+RUN cp ./public/assets/tailwind.css ./assets/tailwind.css
 
+# Ensure all assets exist in both locations
+RUN cp public/assets/* ./assets/ 2>/dev/null || true
 
-# Debug: Check what dx bundle actually generated
-RUN echo "=== Contents of bundle output ===" && \
+# Debug: Show directory structure before bundle
+RUN echo "=== Directory structure before bundle ===" && \
+    ls -la ./ && \
+    echo "=== Contents of ./assets ===" && \
+    ls -la ./assets/ && \
+    echo "=== Contents of ./public/assets ===" && \
+    ls -la ./public/assets/
+
+# Bundle with verbose output to see what's happening
+RUN RUST_LOG=debug dx bundle --platform server --release --features api 2>&1 | tee bundle.log
+
+# Show what dx bundle actually did
+RUN echo "=== Bundle log last 50 lines ===" && \
+    tail -50 bundle.log && \
+    echo "=== Finding all assets in target ===" && \
+    find target/dx -type f \( -name "*.css" -o -name "*.ico" -o -name "*.svg" -o -name "*.html" \) && \
+    echo "=== Web directory contents ===" && \
     ls -la target/dx/learningmoon/release/web/ && \
-    echo "=== Contents of assets folder ===" && \
-    ls -la target/dx/learningmoon/release/web/assets/ && \
-    echo "=== Looking for hashed assets ===" && \
-    find target/dx/learningmoon/release/web/assets -name "*.*" | head -20
+    echo "=== Checking for assets directory ===" && \
+    ls -la target/dx/learningmoon/release/web/assets/ 2>/dev/null || echo "No assets dir"
+
+# WORKAROUND: Manually copy assets after bundle
+RUN mkdir -p target/dx/learningmoon/release/web/assets && \
+    cp ./assets/* target/dx/learningmoon/release/web/assets/ 2>/dev/null || true
 
 FROM chef AS runtime
 
-# Copy the assets
 COPY --from=builder /app/target/dx/learningmoon/release/web/ /usr/local/app
 
-# set our port and make sure to listen for all connections
 ENV PORT=8080
 ENV IP=0.0.0.0
-
-# expose the port 8080
 EXPOSE 8080
 
 WORKDIR /usr/local/app
 
-# Debug: Verify what's in the runtime container
-RUN echo "=== Runtime contents ===" && \
+# Final check
+RUN echo "=== Final container contents ===" && \
     ls -la /usr/local/app/ && \
-    echo "=== Runtime assets ===" && \
-    ls -la /usr/local/app/assets/
+    echo "=== Assets directory ===" && \
+    ls -la /usr/local/app/assets/ 2>/dev/null || echo "No assets"
 
 ENTRYPOINT [ "/usr/local/app/server" ]
