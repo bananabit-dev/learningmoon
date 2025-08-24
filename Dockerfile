@@ -26,14 +26,25 @@ ENV PATH="/.cargo/bin:$PATH"
 # Install Tailwind CLI locally
 RUN npm install -D tailwindcss @tailwindcss/cli
 
-# Build Tailwind CSS (adjust input/output paths to your project)
-RUN npx tailwindcss -i ./tailwind.css -o ./assets/tailwind.css --minify
+# Build Tailwind CSS to the correct location (public/assets)
+RUN npx tailwindcss -i ./tailwind.css -o ./public/assets/tailwind.css --minify
 
-# Build ONCE with fullstack platform (includes both web and server with api feature)
-RUN dx build --platform server --release --features api
+# Bundle with server platform
+RUN dx bundle --platform server --release --features api
+
+# Debug: Check what was actually built
+RUN echo "=== Contents of target/dx ===" && \
+    find target/dx -type f -name "*.css" -o -name "*.ico" -o -name "*.svg" && \
+    echo "=== Contents of public/assets ===" && \
+    ls -la public/assets/
 
 FROM chef AS runtime
-COPY --from=builder /app/target/dx/learningmoon/release/web/ /usr/local/app
+
+# Copy from the correct server directory (not web!)
+COPY --from=builder /app/target/dx/learningmoon/release/server/ /usr/local/app
+
+# IMPORTANT: Copy the actual asset files from public/assets
+COPY --from=builder /app/public/assets /usr/local/app/assets
 
 # set our port and make sure to listen for all connections
 ENV PORT=8080
@@ -44,4 +55,3 @@ EXPOSE 8080
 
 WORKDIR /usr/local/app
 ENTRYPOINT [ "/usr/local/app/server" ]
-
