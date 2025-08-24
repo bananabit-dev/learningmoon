@@ -46,8 +46,8 @@ fn main() {
             // --- Build Axum Router ---
             let app = Router::new()
                 // Serve static assets
-                .nest_service("/assets", get_service(ServeDir::new("public/assets")))
-                .fallback_service(get_service(ServeDir::new("public")))
+                .nest_service("/assets", get_service(ServeDir::new("assets")))
+                .fallback_service(get_service(ServeDir::new("assets")))
                 // Dioxus SPA hydration
                 .serve_dioxus_application(
                     ServeConfig::builder()
