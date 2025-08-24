@@ -1,6 +1,6 @@
 [application]
 
-out_dir = "dist"
+out_dir = "public"
 asset_dir = "public"
 
 [web.app]
