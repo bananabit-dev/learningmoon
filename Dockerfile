@@ -8,11 +8,10 @@ RUN cargo chef prepare --recipe-path recipe.json
 
 FROM chef AS builder
 
-# Install Node.js + npm (for Tailwind)
-RUN apt-get update && apt-get install -y curl ca-certificates gnupg \
-    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
-    && apt-get install -y nodejs \
-    && npm install -g npm@latest
+# Install standalone Tailwind CLI (no Node.js needed!)
+RUN curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64 \
+    && chmod +x tailwindcss-linux-x64 \
+    && mv tailwindcss-linux-x64 /usr/local/bin/tailwindcss
 
 RUN rustup target add wasm32-unknown-unknown
 
@@ -26,42 +25,18 @@ RUN curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/ca
 RUN cargo binstall dioxus-cli --root /.cargo -y --force
 ENV PATH="/.cargo/bin:$PATH"
 
-# Install Tailwind
-RUN npm install -D tailwindcss
-
-# CRITICAL: Create the correct directory structure for assets
-# Dioxus expects assets in specific locations
+# Create directories and build Tailwind
 RUN mkdir -p ./public/assets ./assets
-
-# Build Tailwind CSS to BOTH locations to ensure it's found
-RUN npx tailwindcss -i ./tailwind.css -o ./public/assets/tailwind.css --minify
+RUN tailwindcss -i ./tailwind.css -o ./public/assets/tailwind.css --minify
 RUN cp ./public/assets/tailwind.css ./assets/tailwind.css
 
-# Ensure all assets exist in both locations
+# Copy other assets
 RUN cp public/assets/* ./assets/ 2>/dev/null || true
 
-# Debug: Show directory structure before bundle
-RUN echo "=== Directory structure before bundle ===" && \
-    ls -la ./ && \
-    echo "=== Contents of ./assets ===" && \
-    ls -la ./assets/ && \
-    echo "=== Contents of ./public/assets ===" && \
-    ls -la ./public/assets/
+# Bundle
+RUN dx bundle --platform server --release --features api
 
-# Bundle with verbose output to see what's happening
-RUN RUST_LOG=debug dx bundle --platform server --release --features api 2>&1 | tee bundle.log
-
-# Show what dx bundle actually did
-RUN echo "=== Bundle log last 50 lines ===" && \
-    tail -50 bundle.log && \
-    echo "=== Finding all assets in target ===" && \
-    find target/dx -type f \( -name "*.css" -o -name "*.ico" -o -name "*.svg" -o -name "*.html" \) && \
-    echo "=== Web directory contents ===" && \
-    ls -la target/dx/learningmoon/release/web/ && \
-    echo "=== Checking for assets directory ===" && \
-    ls -la target/dx/learningmoon/release/web/assets/ 2>/dev/null || echo "No assets dir"
-
-# WORKAROUND: Manually copy assets after bundle
+# Ensure assets are in the bundle output
 RUN mkdir -p target/dx/learningmoon/release/web/assets && \
     cp ./assets/* target/dx/learningmoon/release/web/assets/ 2>/dev/null || true
 
@@ -74,11 +49,4 @@ ENV IP=0.0.0.0
 EXPOSE 8080
 
 WORKDIR /usr/local/app
-
-# Final check
-RUN echo "=== Final container contents ===" && \
-    ls -la /usr/local/app/ && \
-    echo "=== Assets directory ===" && \
-    ls -la /usr/local/app/assets/ 2>/dev/null || echo "No assets"
-
 ENTRYPOINT [ "/usr/local/app/server" ]
