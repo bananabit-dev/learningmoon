@@ -26,23 +26,24 @@ ENV PATH="/.cargo/bin:$PATH"
 # Install Tailwind CLI locally
 RUN npm install -D tailwindcss @tailwindcss/cli
 
-# Build Tailwind CSS to public/assets
+# Build Tailwind CSS to public/assets (where dx bundle expects it)
 RUN mkdir -p ./public/assets && \
     npx tailwindcss -i ./tailwind.css -o ./public/assets/tailwind.css --minify
 
-# Bundle with server platform
+# Bundle with server platform - this should process assets with the asset! macro
 RUN dx bundle --platform server --release --features api
 
-# Copy assets to the bundle output (the assets folder already exists!)
-RUN cp -r public/assets/* target/dx/learningmoon/release/web/assets/
-
-# Debug: Check what's in the assets folder
-RUN echo "=== Contents of bundled assets ===" && \
-    ls -la target/dx/learningmoon/release/web/assets/
+# Debug: Check what dx bundle actually generated
+RUN echo "=== Contents of bundle output ===" && \
+    ls -la target/dx/learningmoon/release/web/ && \
+    echo "=== Contents of assets folder ===" && \
+    ls -la target/dx/learningmoon/release/web/assets/ && \
+    echo "=== Looking for hashed assets ===" && \
+    find target/dx/learningmoon/release/web/assets -name "*.*" | head -20
 
 FROM chef AS runtime
 
-# Copy from the correct location - web not server!
+# Copy the assets
 COPY --from=builder /app/target/dx/learningmoon/release/web/ /usr/local/app
 
 # set our port and make sure to listen for all connections
@@ -53,4 +54,11 @@ ENV IP=0.0.0.0
 EXPOSE 8080
 
 WORKDIR /usr/local/app
+
+# Debug: Verify what's in the runtime container
+RUN echo "=== Runtime contents ===" && \
+    ls -la /usr/local/app/ && \
+    echo "=== Runtime assets ===" && \
+    ls -la /usr/local/app/assets/
+
 ENTRYPOINT [ "/usr/local/app/server" ]
