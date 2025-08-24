@@ -29,10 +29,8 @@ RUN npm install -D tailwindcss @tailwindcss/cli
 # Build Tailwind CSS (adjust input/output paths to your project)
 RUN npx tailwindcss -i ./tailwind.css -o ./assets/tailwind.css --minify
 
-# Create the final web bundle folder. Bundle always executes in release mode with optimizations enabled
-RUN dx bundle --platform web --release
-# Create the final server bundle folder. Bundle always executes in release mode with optimizations enabled
-RUN dx bundle --platform server --release --features api
+# Build ONCE with fullstack platform (includes both web and server with api feature)
+RUN dx build --platform fullstack --release --features "web,api"
 
 FROM chef AS runtime
 COPY --from=builder /app/target/dx/learningmoon/release/web/ /usr/local/app
