@@ -6,7 +6,6 @@ use ui::views::auth::register::Register;
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
 enum Route {
-    #[layout(Navbar)]
     #[route("/")]
     Home {},
     #[route("/login")]
@@ -73,6 +72,7 @@ fn App() -> Element {
 #[component]
 fn Home() -> Element {
     rsx! {
+        Navbar { }
         p { "Welcome to learningmoon !" }
     }
 }

@@ -36,3 +36,20 @@ pub fn Register() -> Element {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use dioxus::core::NoOpMutations;
+
+    #[test]
+    fn register_component_renders() {
+        let mut dom = VirtualDom::new(Register);
+
+        // Rebuild the component tree with a no-op mutations sink
+        dom.rebuild(&mut NoOpMutations);
+
+        // If we got here without panic, the component rendered successfully
+        // (no need to inspect VNode internals in 0.7)
+    }
+}
