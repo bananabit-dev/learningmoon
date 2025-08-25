@@ -30,7 +30,7 @@ RUN dx bundle --platform web --package web --release
 
 FROM chef AS runtime
 
-COPY --from=builder /app/target/dx/learningmoon/release/web/ /usr/local/app
+COPY --from=builder /app/target/dx/web/release/web/ /usr/local/app
 
 ENV PORT=8080
 ENV IP=0.0.0.0
