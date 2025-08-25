@@ -16,7 +16,7 @@ RUN curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/latest/downlo
 RUN rustup target add wasm32-unknown-unknown
 
 COPY --from=planner /app/recipe.json recipe.json
-RUN cargo chef cook --release --recipe-path recipe.json --features api
+RUN cargo chef cook --release --recipe-path recipe.json
 
 COPY . .
 
