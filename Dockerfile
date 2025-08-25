@@ -26,7 +26,7 @@ RUN cargo binstall dioxus-cli --root /.cargo -y --force
 ENV PATH="/.cargo/bin:$PATH"
 
 # Bundle
-RUN dx bundle --platform web --release 
+RUN dx bundle --platform web --package web --release 
 
 FROM chef AS runtime
 
