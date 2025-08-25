@@ -17,17 +17,14 @@ enum Route {
     Register {},
 }
 
-const FAVICON: Asset = asset!("/assets/favicon.ico");
-const MAIN_CSS: Asset = asset!("/assets/main.css");
-const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
 
 
 #[component]
 pub fn App() -> Element {
     rsx! {
-        document::Link { rel: "icon", href: FAVICON }
-        document::Link { rel: "stylesheet", href: MAIN_CSS } 
-        document::Link { rel: "stylesheet", href: TAILWIND_CSS }
+        document::Link { rel: "icon", href: "/assets/favicon.ico" }
+        document::Link { rel: "stylesheet", href: "/assets/main.css" } 
+        document::Link { rel: "stylesheet", href: "/assets/tailwind.css" }
         Router::<Route> {}
     }
 }

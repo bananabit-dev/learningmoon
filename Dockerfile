@@ -28,6 +28,10 @@ ENV PATH="/.cargo/bin:$PATH"
 # Bundle
 RUN dx bundle --platform web --package web --release 
 
+# Ensure assets are in the bundle output
+RUN mkdir -p target/dx/web/release/web/assets && \
+    cp ./assets/* target/dx/web/release/web/assets/ 2>/dev/null || true
+
 FROM chef AS runtime
 
 COPY --from=builder /app/target/dx/web/release/web/ /usr/local/app
