@@ -1,7 +1,7 @@
 /* App-wide styling */
 body {
-    background-color: #0f1116;
-    color: #ffffff;
+    background-color: #ffffff;
+    color: #000000;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 20px;
 }
@@ -24,11 +24,11 @@ body {
 }
 
 #links a {
-    color: white;
+    color: rgb(0, 174, 255);
     text-decoration: none;
     margin-top: 20px;
     margin: 10px 0px;
-    border: white 1px solid;
+    border: rgb(0, 174, 255) 1px solid;
     border-radius: 5px;
     padding: 10px;
 }
@@ -39,7 +39,10 @@ body {
 }
 
 #header {
-    max-width: 1200px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
 }
 
 /* Navbar */
@@ -49,7 +52,7 @@ body {
   }
   
 #navbar a {
-    color: #ffffff;
+    color: #000000;
     margin-right: 20px;
     text-decoration: none;
     transition: color 0.2s ease;
@@ -59,14 +62,3 @@ body {
     cursor: pointer;
     color: #91a4d2;
 }
-
-/* Blog page */
-#blog {
-    margin-top: 50px;
-  }
-  
-#blog a {
-    color: #ffffff;
-    margin-top: 50px;
-}
-
