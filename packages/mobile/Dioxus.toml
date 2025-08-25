@@ -1,10 +1,9 @@
 [application]
-assets_dir = "public"
 
 [web.app]
 
 # HTML title tag content
-title = "learningmoon"
+title = "mobile"
 
 # include `assets` in web platform
 [web.resource]

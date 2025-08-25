@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
-use crate::ui::components::login::Login as login_component;
-use crate::ui::components::logo::Logo;
+use crate::components::login::Login as login_component;
+use crate::components::logo::Logo;
 
 #[component]
 pub fn Login() -> Element {

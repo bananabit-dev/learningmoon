@@ -1,7 +1,7 @@
 /* App-wide styling */
 body {
-    background-color: #ffffff;
-    color: #000000;
+    background-color: #0f1116;
+    color: #ffffff;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 20px;
 }
@@ -24,11 +24,11 @@ body {
 }
 
 #links a {
-    color: rgb(0, 174, 255);
+    color: white;
     text-decoration: none;
     margin-top: 20px;
     margin: 10px 0px;
-    border: rgb(0, 174, 255) 1px solid;
+    border: white 1px solid;
     border-radius: 5px;
     padding: 10px;
 }
@@ -39,10 +39,7 @@ body {
 }
 
 #header {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 50%;
+    max-width: 1200px;
 }
 
 /* Navbar */
@@ -52,7 +49,7 @@ body {
   }
   
 #navbar a {
-    color: #000000;
+    color: #ffffff;
     margin-right: 20px;
     text-decoration: none;
     transition: color 0.2s ease;
@@ -73,38 +70,3 @@ body {
     margin-top: 50px;
 }
 
-/* Echo */
-#echo {
-    width: 360px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 50px;
-    background-color: #1e222d;
-    padding: 20px;
-    border-radius: 10px;
-}
-
-#echo>h4 {
-    margin: 0px 0px 15px 0px;
-}
-
-
-#echo>input {
-    border: none;
-    border-bottom: 1px white solid;
-    background-color: transparent;
-    color: #ffffff;
-    transition: border-bottom-color 0.2s ease;
-    outline: none;
-    display: block;
-    padding: 0px 0px 5px 0px;
-    width: 100%;
-}
-
-#echo>input:focus {
-    border-bottom-color: #6d85c6;
-}
-
-#echo>p {
-    margin: 20px 0px 0px auto;
-}

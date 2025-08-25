@@ -37,7 +37,7 @@ jobs:
 
             - name: Build the application
               run: | 
-                dx bundle --web
+                dx bundle --platform web --package web
               
             - name: Build the Docker image
               uses: docker/build-push-action@v2

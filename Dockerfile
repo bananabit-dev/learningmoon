@@ -25,20 +25,8 @@ RUN curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/ca
 RUN cargo binstall dioxus-cli --root /.cargo -y --force
 ENV PATH="/.cargo/bin:$PATH"
 
-# Create directories and build Tailwind
-RUN mkdir -p ./public/assets ./assets
-RUN tailwindcss -i ./tailwind.css -o ./public/assets/tailwind.css --minify
-RUN cp ./public/assets/tailwind.css ./assets/tailwind.css
-
-# Copy other assets
-RUN cp public/assets/* ./assets/ 2>/dev/null || true
-
 # Bundle
-RUN dx bundle --platform server --release --features api
-
-# Ensure assets are in the bundle output
-RUN mkdir -p target/dx/learningmoon/release/web/assets && \
-    cp ./assets/* target/dx/learningmoon/release/web/assets/ 2>/dev/null || true
+RUN dx bundle --platform web --release 
 
 FROM chef AS runtime
 
